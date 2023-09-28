@@ -12,10 +12,10 @@ const port=process.env.PORT
 const route=require("./routes/client/index.router")
 const database=require("./config/database")
 const routeAdmin=require("./routes/admin/index.router")
-app.set("views",`${dirname}/views`)
+app.set("views",`${__dirname}/views`)
 app.set("view engine","pug")
 
-app.use(express.static(`${dirname}/public`))
+app.use(express.static(`${__dirname}/public`))
 
 
 // override with POST having ?_method=DELETE
