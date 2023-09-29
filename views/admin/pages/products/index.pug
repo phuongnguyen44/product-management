@@ -4,6 +4,7 @@ include ../../mixins/changeMulti.pug
 include ../../mixins/alert.pug
 block main
   +alert-success(3000)
+  
   h1(class="mb-4") Danh sách sản phẩm
   .card.mb-3
     .card-header Bộ lọc và Tìm kiếm
@@ -102,7 +103,14 @@ block main
                     data-id=item.id
                   ) Dừng hoạt động
         td
-          button(class="btn btn-warning btn-sm") Sửa
+          a(
+            href=`/${prefixAdmin}/products/detail/${item.id}`
+            class="btn btn-secondary btn-sm"
+          ) Chi tiết
+          a(
+            href=`/${prefixAdmin}/products/edit/${item.id}`
+            class="btn btn-warning btn-sm"
+            ) Sửa
           button(
             class="btn btn-danger btn-sm ml-1"
             button-delete

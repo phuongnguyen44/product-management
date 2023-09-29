@@ -14,3 +14,17 @@ module.exports.index = async (req,res) =>{
         Products:newItem
     })
 }
+module.exports.detail=async(req,res) =>{
+    const slug=req.params.slug
+    const product= await Product.findOne({
+        slug:slug,
+        deleted:false,
+        status:"active"
+
+    })
+    product.newPrice=product.newPrice=(((100-product.discountPercentage)*product.price)/100).toFixed(0)
+    res.render("client/pages/products/detail",{
+        pageTitle :"chi tiet san pham",
+        product:product
+    })
+}

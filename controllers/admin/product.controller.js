@@ -78,28 +78,100 @@ module.exports.delete= async(req,res) =>{
 }
 
 module.exports.create= async (req,res) =>{
-    res.render("admin/pages/products/create.pug",{
-        pageTitle:"Tao moi san pham"
-       
-    })
+    try {
+        res.render("admin/pages/products/create.pug",{
+            pageTitle:"Tao moi san pham"
+           
+        })
+    } catch (error) {
+        res.redirect(`/${systemConfig.prefixAdmin}/products`)
+    }
+   
 }
 module.exports.createPost=async (req,res) =>{
-    req.body.price = parseInt(req.body.price)
-    req.body.discountPercentage = parseInt(req.body.discountPercentage)
-    req.body.stock = parseInt(req.body.stock)
-    if(req.body.position===""){
-        const countProducts= await Product.countDocuments()
-        req.body.position=countProducts+1
-    }
-    else{
-        req.body.position = parseInt(req.body.position);
-    }
-    if(req.file && req.file.filename) {
-        req.body.thumbnail = `/uploads/${req.file.filename}`;
-      }
+    try {
+        req.body.price = parseInt(req.body.price)
+        req.body.discountPercentage = parseInt(req.body.discountPercentage)
+        req.body.stock = parseInt(req.body.stock)
+        if(req.body.position===""){
+            const countProducts= await Product.countDocuments()
+            req.body.position=countProducts+1
+        }
+        else{
+            req.body.position = parseInt(req.body.position);
+        }
+        if(req.file && req.file.filename) {
+            req.body.thumbnail = `/uploads/${req.file.filename}`;
+          }
+        
+        const product =new Product(req.body)
+        await product.save()
     
-    const product =new Product(req.body)
-    await product.save()
+       res.redirect(`/${systemConfig.prefixAdmin}/products`)
+    } catch (error) {
+        res.redirect(`/${systemConfig.prefixAdmin}/products`)
+    }
+   
+}
 
-   res.redirect(`/${systemConfig.prefixAdmin}/products`)
+module.exports.edit=async(req,res) =>{
+    try {
+    const id=req.params.id
+    const product=await Product.findOne({
+        _id:id,
+        deleted:false
+    })
+    res.render("admin/pages/products/edit.pug",{
+        pageTitle:"Chinh sua san pham",
+        product:product
+       
+    })
+    } catch (error) {
+        res.redirect(`/${systemConfig.prefixAdmin}/products`)
+    }
+    
+}
+
+module.exports.editPatch=async(req,res) =>{
+    try {
+        const id = req.params.id;
+
+        req.body.price = parseInt(req.body.price);
+        req.body.discountPercentage = parseInt(req.body.discountPercentage);
+        req.body.stock = parseInt(req.body.stock);
+
+        req.body.position = parseInt(req.body.position);
+
+        if(req.file && req.file.filename) {
+            req.body.thumbnail = `/uploads/${req.file.filename}`;
+        }
+
+        await Product.updateOne({ _id: id }, req.body);
+        req.flash("success", "Cập nhật sản phẩm thành công!");
+
+        res.redirect(`/${systemConfig.prefixAdmin}/products`)
+    } catch (error) {
+        res.redirect(`/${systemConfig.prefixAdmin}/products`)
+    }
+  
+  
+
+  
+}
+
+module.exports.detail=async(req,res) =>{
+    try {
+        const id=req.params.id
+        const product=await Product.findOne({
+            _id:id,
+            deleted:false
+        })
+        res.render("admin/pages/products/detail.pug",{
+            pageTitle:"Chi tiet san pham",
+            product:product
+           
+        })
+    } catch (error) {
+        res.redirect(`/${systemConfig.prefixAdmin}/products`)
+    }
 }
